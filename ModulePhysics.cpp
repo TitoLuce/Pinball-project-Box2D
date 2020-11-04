@@ -5,6 +5,7 @@
 #include "ModulePhysics.h"
 #include "p2Point.h"
 #include "math.h"
+#include "ModuleSceneIntro.h"
 
 #ifdef _DEBUG
 #pragma comment( lib, "Box2D/libx86/Debug/Box2D.lib" )
@@ -265,8 +266,23 @@ update_status ModulePhysics::PostUpdate()
 			}
 
 			// TODO 1: If mouse button 1 is pressed ...
-			// App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN
 			// test if the current body contains mouse position
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+			{
+				b2Vec2 Mpos = { PIXEL_TO_METERS(App->input->GetMouseX()),PIXEL_TO_METERS(App->input->GetMouseY()) };
+				if (f->GetShape()->TestPoint(b->GetTransform(), Mpos))
+				{
+					b2MouseJointDef def;
+					def.bodyA = ground;
+					def.bodyB = b;
+					def.target = Mpos;
+					def.dampingRatio = 0.5f;
+					def.frequencyHz = 2.0f;
+					def.maxForce = 100.0f * b->GetMass();
+					mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
+					currentBody = b;
+				}
+			}
 		}
 	}
 
@@ -278,6 +294,21 @@ update_status ModulePhysics::PostUpdate()
 
 	// TODO 3: If the player keeps pressing the mouse button, update
 	// target position and draw a red line between both anchor points
+	if (currentBody != nullptr)
+	{
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+		{
+			b2Vec2 Mpos = { PIXEL_TO_METERS(App->input->GetMouseX()),PIXEL_TO_METERS(App->input->GetMouseY()) };
+			mouse_joint->SetTarget(Mpos);
+			App->renderer->DrawLine(App->input->GetMouseX(), App->input->GetMouseY(), METERS_TO_PIXELS(currentBody->GetPosition().x), METERS_TO_PIXELS(currentBody->GetPosition().y), 255, 0, 0);
+		}
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP)
+		{
+			world->DestroyJoint(mouse_joint);
+			mouse_joint = nullptr;
+			currentBody = nullptr;
+		}
+	}
 
 	// TODO 4: If the player releases the mouse button, destroy the joint
 
