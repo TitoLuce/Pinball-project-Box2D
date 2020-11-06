@@ -19,7 +19,7 @@ public:
 	PhysBody() : listener(NULL), body(NULL)
 	{}
 
-	void GetPosition(int& x, int &y) const;
+	void GetPosition(int& x, int& y) const;
 	float GetRotation() const;
 	bool Contains(int x, int y) const;
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
@@ -46,9 +46,14 @@ public:
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, int* points, int size);
+	PhysBody* CreateGround(int x, int y, int* points, int size);
+
 
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
+
+	p2List<PhysBody*> table;
+
 
 private:
 
