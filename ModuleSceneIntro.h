@@ -26,6 +26,7 @@ public:
 	bool sensed;
 
 	SDL_Texture* circle;
+	SDL_Texture* stage = nullptr;
 	SDL_Texture* box;
 	SDL_Texture* rick;
 	uint bonus_fx;
