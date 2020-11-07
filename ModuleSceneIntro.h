@@ -22,6 +22,12 @@ public:
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
 
+	PhysBody* bumper1 = nullptr;
+	PhysBody* bumper2 = nullptr;
+	PhysBody* bumper3 = nullptr;
+	PhysBody* bumper4 = nullptr;
+	PhysBody* bumper5 = nullptr;
+
 	PhysBody* sensor;
 	bool sensed;
 

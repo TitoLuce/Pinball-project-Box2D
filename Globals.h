@@ -21,7 +21,7 @@ enum update_status
 };
 
 // Configuration -----------
-#define SCREEN_WIDTH 800
+#define SCREEN_WIDTH 625
 #define SCREEN_HEIGHT 1000
 #define SCREEN_SIZE 1
 #define WIN_FULLSCREEN false

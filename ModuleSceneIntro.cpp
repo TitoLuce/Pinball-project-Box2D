@@ -173,11 +173,13 @@ update_status ModuleSceneIntro::Update()
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	int x, y;
-
-	App->audio->PlayFx(bonus_fx);
+	if (bodyA == sensor) {
+		App->audio->PlayFx(bonus_fx);
+	}
 
 	/*
+	int x, y;
+
 	if(bodyA)
 	{
 		bodyA->GetPosition(x, y);
