@@ -43,6 +43,7 @@ public:
 	bool CleanUp();
 
 	PhysBody* CreateCircle(int x, int y, int radius);
+	PhysBody* CreateCircleStatic(int x, int y, int radius);
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, int* points, int size);
@@ -52,7 +53,7 @@ public:
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
 
-	p2List<PhysBody*> table;
+	PhysBody* table;
 
 
 private:

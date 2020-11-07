@@ -9,7 +9,7 @@
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	circle = box = rick = NULL;
+	circle  = NULL;
 	ray_on = false;
 	sensed = false;
 }
@@ -25,11 +25,38 @@ bool ModuleSceneIntro::Start()
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	
+	//SDL_Texture Loading
 	stage = App->textures->Load("pinball/Stage.png");
 	circle = App->textures->Load("pinball/wheel.png");
-	box = App->textures->Load("pinball/crate.png");
-	rick = App->textures->Load("pinball/rick_head.png");
+	bumper = App->textures->Load("pinball/Bumper.png");
+
+
+	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+
+
+
+	//Chains
+
+
+
+
+
+	//create circles that will be the bumpers
+
+	bumper1 = App->physics->CreateCircleStatic(188+ 35, 178+ 35, 35);
+	bumper2 = App->physics->CreateCircleStatic(302 + 35, 111+ 35, 35);
+	bumper3 = App->physics->CreateCircleStatic(402+ 35, 152+ 35, 35);
+	bumper4 = App->physics->CreateCircleStatic(302 + 35, 219+ 35, 35);
+	bumper5 = App->physics->CreateCircleStatic(221+ 35, 274+ 35, 35);
+	bumper1->listener = this;
+	bumper2->listener = this;
+	bumper3->listener = this;
+	bumper4->listener = this;
+	bumper5->listener = this;
+
+
+
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 
@@ -117,6 +144,11 @@ update_status ModuleSceneIntro::Update()
 
 	// All draw functions ------------------------------------------------------
 	App->renderer->Blit(stage, 0, 0);
+	App->renderer->Blit(bumper, 188 , 178 );
+	App->renderer->Blit(bumper, 302 , 111 );
+	App->renderer->Blit(bumper, 402 , 152 );
+	App->renderer->Blit(bumper, 302 , 219 );
+	App->renderer->Blit(bumper, 221 , 274);
 
 	p2List_item<PhysBody*>* c = circles.getFirst();
 

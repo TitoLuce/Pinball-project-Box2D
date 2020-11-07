@@ -22,6 +22,10 @@ public:
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
 
+
+	PhysBody* background;
+
+
 	PhysBody* bumper1 = nullptr;
 	PhysBody* bumper2 = nullptr;
 	PhysBody* bumper3 = nullptr;
@@ -33,8 +37,7 @@ public:
 
 	SDL_Texture* circle;
 	SDL_Texture* stage = nullptr;
-	SDL_Texture* box;
-	SDL_Texture* rick;
+	SDL_Texture* bumper = nullptr;
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
