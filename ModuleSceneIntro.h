@@ -21,7 +21,7 @@ public:
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
-
+	
 
 	PhysBody* background;
 
@@ -38,9 +38,20 @@ public:
 
 	// Flippers
 
-	PhysBody* leftFliperB;
-	PhysBody* rightFliperB;
-	PhysBody* topFliperB;
+	//PhysBody* leftFliperB;
+	//PhysBody* rightFliperB;
+	//PhysBody* topFliperB;
+
+	struct Flipper
+	{
+		PhysBody* polygon;
+		PhysBody* rotor;
+		
+	};
+
+
+	p2List<Flipper*> flippers;
+
 
 	PhysBody* bumper1 = nullptr;
 	PhysBody* bumper2 = nullptr;

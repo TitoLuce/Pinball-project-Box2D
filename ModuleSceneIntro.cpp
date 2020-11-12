@@ -254,16 +254,36 @@ bool ModuleSceneIntro::Start()
 	bumper5->listener = this;
 
 	// Flipers
-	
-	int leftFliper[8] = {
+	/*
+	int leftFliperPoints[8] = {
 	184, 894,
 	198, 860,
 	283, 907,
 	278, 919
-	};
-	// leftFliperB = App->physics->CreatePolygon(184, 894, leftFliper, 14);
+	};*/
+
+	//leftFliperB = App->physics->CreatePolygon(184, 894, leftFliper, 14);
 
 
+	b2Vec2 athing = { -0.6, 0 };
+	b2Vec2 bthing = { 0, 0 };
+
+	Flipper* leftFlipper = new Flipper;
+	leftFlipper->rotor = App->physics->CreateCircleStatic(205, 885, 4);
+	leftFlipper->polygon = App->physics->CreateRectangle(209, 920, 90, 26);
+	App->physics->CreateRevoluteJoint(leftFlipper->polygon, athing, leftFlipper->rotor, bthing, 15.0f);
+	flippers.add(leftFlipper);
+
+
+
+	athing = { 0.6, 0 };
+
+
+	Flipper* rightFlipper = new Flipper;
+	rightFlipper->rotor = App->physics->CreateCircleStatic(395, 885, 4);
+	rightFlipper->polygon = App->physics->CreateRectangle(209, 904, 90, 26);
+	App->physics->CreateRevoluteJoint(rightFlipper->polygon, athing, rightFlipper->rotor, bthing, 15.0f);
+	flippers.add(rightFlipper);
 
 
 
