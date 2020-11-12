@@ -26,6 +26,16 @@ public:
 	PhysBody* background;
 
 
+	PhysBody* table;
+
+	PhysBody* obj1;
+	PhysBody* obj2;
+	PhysBody* obj3;
+	PhysBody* obj4;
+	PhysBody* obj5;
+	PhysBody* obj6;
+	PhysBody* obj7;
+
 	PhysBody* bumper1 = nullptr;
 	PhysBody* bumper2 = nullptr;
 	PhysBody* bumper3 = nullptr;
