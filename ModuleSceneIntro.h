@@ -25,7 +25,7 @@ public:
 
 	PhysBody* background;
 
-
+	// Objects
 	PhysBody* table;
 
 	PhysBody* obj1;
@@ -35,6 +35,12 @@ public:
 	PhysBody* obj5;
 	PhysBody* obj6;
 	PhysBody* obj7;
+
+	// Flippers
+
+	PhysBody* leftFliperB;
+	PhysBody* rightFliperB;
+	PhysBody* topFliperB;
 
 	PhysBody* bumper1 = nullptr;
 	PhysBody* bumper2 = nullptr;
