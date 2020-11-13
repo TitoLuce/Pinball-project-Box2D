@@ -118,40 +118,70 @@ bool ModuleSceneIntro::Start()
 	0, 990
 	};
 	table = App->physics->CreateGround(0, 0, stage, 156);
-	int leftCorner[34] = {
-	74, 264,
-	62, 269,
-	52, 258,
-	50, 215,
-	55, 158,
-	69, 112,
-	106, 80,
-	126, 69,
-	198, 73,
-	209, 88,
-	205, 103,
-	192, 113,
-	161, 117,
-	131, 134,
-	110, 166,
-	92, 203,
-	78, 252
+	int leftCorner[54] = {
+		59, 268,
+		51, 260,
+		53, 171,
+		58, 150,
+		63, 134,
+		69, 118,
+		77, 108,
+		86, 99,
+		100, 88,
+		113, 78,
+		126, 74,
+		200, 73,
+		208, 81,
+		208, 105,
+		202, 110,
+		166, 116,
+		153, 120,
+		138, 129,
+		126, 140,
+		115, 153,
+		104, 174,
+		96, 196,
+		89, 215,
+		85, 230,
+		81, 250,
+		72, 266,
+		67, 268
 	};
-	obj1 = App->physics->CreateGround(0, 0, leftCorner, 34);
-	int leftMedium[22] = {
-	125, 453,
-	71, 369,
-	65, 350,
-	65, 316,
-	84, 298,
-	107, 296,
-	133, 297,
-	258, 392,
-	257, 422,
-	146, 455,
-	133, 455
+	obj1 = App->physics->CreateGround(0, 0, leftCorner, 54);
+	int leftMedium[62] = {
+		66, 314,
+		75, 303,
+		86, 298,
+		101, 294,
+		115, 294,
+		129, 296,
+		140, 300,
+		149, 305,
+		164, 314,
+		185, 330,
+		204, 347,
+		221, 362,
+		231, 371,
+		241, 377,
+		247, 380,
+		257, 385,
+		255, 390,
+		255, 403,
+		257, 417,
+		254, 423,
+		237, 429,
+		208, 436,
+		170, 446,
+		142, 455,
+		131, 455,
+		118, 446,
+		103, 424,
+		84, 395,
+		72, 373,
+		66, 352,
+		65, 320
 	};
-	obj2 = App->physics->CreateGround(0, 0, leftMedium, 22);
+	obj2 = App->physics->CreateGround(0, 0, leftMedium, 62);
 	int rightMedium[50] = {
 	457, 429,
 	458, 404,
@@ -254,17 +284,7 @@ bool ModuleSceneIntro::Start()
 	bumper5->listener = this;
 
 	// Flipers
-	/*
-	int leftFliperPoints[8] = {
-	184, 894,
-	198, 860,
-	283, 907,
-	278, 919
-	};*/
-
-	//leftFliperB = App->physics->CreatePolygon(184, 894, leftFliper, 14);
-
-
+	
 	b2Vec2 athing = { -0.6, 0 };
 	b2Vec2 bthing = { 0, 0 };
 
@@ -273,6 +293,12 @@ bool ModuleSceneIntro::Start()
 	leftFlipper->polygon = App->physics->CreateRectangle(209, 920, 90, 26);
 	App->physics->CreateRevoluteJoint(leftFlipper->polygon, athing, leftFlipper->rotor, bthing, 15.0f);
 	flippers.add(leftFlipper);
+
+	Flipper* topFlipper = new Flipper;
+	topFlipper->rotor = App->physics->CreateCircleStatic(268, 405, 4);
+	topFlipper->polygon = App->physics->CreateRectangle(270, 390, 60, 20);
+	App->physics->CreateRevoluteJoint(topFlipper->polygon, athing, topFlipper->rotor, bthing, 15.0f);
+	flippers.add(topFlipper);
 
 
 
@@ -303,6 +329,40 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
+
+
+
+	//Inputs Left Right ========================================================
+	if (App->input->GetKey(SDL_SCANCODE_LEFT)  /*&& !App->player->game_over*/) {
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) 
+		{
+			p2List_item<Flipper*>* f = flippers.getFirst();
+			while (f != NULL)
+			{
+				
+				f->data->polygon->body->ApplyForce({ -100,0 }, { 0,0 }, true);
+				
+				f = f->next;
+			}
+		}
+		
+	}
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/) {
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		{
+			p2List_item<Flipper*>* f = flippers.getFirst();
+			while (f != NULL)
+			{
+				
+				f->data->polygon->body->ApplyForce({ 100,0 }, { 0,0 }, true);
+				
+				f = f->next;
+			}
+		}
+		
+		
+	}
+
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		ray_on = !ray_on;
@@ -314,6 +374,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10));
 		circles.getLast()->data->listener = this;
+		circles.getLast()->data->body->SetBullet(true);
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -339,37 +400,11 @@ update_status ModuleSceneIntro::Update()
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		if (c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
-			App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
-	//c = boxes.getFirst();
-
-	//while (c != NULL)
-	//{
-	//	int x, y;
-	//	c->data->GetPosition(x, y);
-	//	App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
-	//	if (ray_on)
-	//	{
-	//		int hit = c->data->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
-	//		if (hit >= 0)
-	//			ray_hit = hit;
-	//	}
-	//	c = c->next;
-	//}
-
-	//c = ricks.getFirst();
-
-	//while (c != NULL)
-	//{
-	//	int x, y;
-	//	c->data->GetPosition(x, y);
-	//	App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
-	//	c = c->next;
-	//}
-
+	
 	// ray -----------------
 	if (ray_on == true)
 	{
