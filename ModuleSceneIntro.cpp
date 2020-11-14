@@ -6,6 +6,7 @@
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModuleFonts.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -29,12 +30,10 @@ bool ModuleSceneIntro::Start()
 	stage = App->textures->Load("pinball/Stage.png");
 	circle = App->textures->Load("pinball/wheel.png");
 	bumper = App->textures->Load("pinball/Bumper.png");
-
+	title = App->textures->Load("pinball/Title.png");
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
-
-
 
 	//Chains
 	int stage[156] = {
@@ -315,6 +314,9 @@ bool ModuleSceneIntro::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 
+	//Font
+	font = App->fonts->Load("pinball/Font2.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZÑ123456789.:-+*/_!?0", 1);
+
 	return ret;
 }
 
@@ -329,52 +331,53 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-
-
-
-	//Inputs Left Right ========================================================
-	if (App->input->GetKey(SDL_SCANCODE_LEFT)  /*&& !App->player->game_over*/) {
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) 
-		{
-			p2List_item<Flipper*>* f = flippers.getFirst();
-			while (f != NULL)
-			{
-				
-				f->data->polygon->body->ApplyForce({ -100,0 }, { 0,0 }, true);
-				
-				f = f->next;
-			}
-		}
-		
-	}
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/) {
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		{
-			p2List_item<Flipper*>* f = flippers.getFirst();
-			while (f != NULL)
-			{
-				
-				f->data->polygon->body->ApplyForce({ 100,0 }, { 0,0 }, true);
-				
-				f = f->next;
-			}
-		}
-		
-		
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	//Inputs========================================================
+	if (gameState == GameState::PLAYING)
 	{
-		ray_on = !ray_on;
-		ray.x = App->input->GetMouseX();
-		ray.y = App->input->GetMouseY();
-	}
+		if (App->input->GetKey(SDL_SCANCODE_LEFT))
+		{
+			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			{
+				p2List_item<Flipper*>* f = flippers.getFirst();
+				while (f != NULL)
+				{
 
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10));
-		circles.getLast()->data->listener = this;
-		circles.getLast()->data->body->SetBullet(true);
+					f->data->polygon->body->ApplyForce({ -100,0 }, { 0,0 }, true);
+
+					f = f->next;
+				}
+			}
+
+		}
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/) {
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			{
+				p2List_item<Flipper*>* f = flippers.getFirst();
+				while (f != NULL)
+				{
+
+					f->data->polygon->body->ApplyForce({ 100,0 }, { 0,0 }, true);
+
+					f = f->next;
+				}
+			}
+
+
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			ray_on = !ray_on;
+			ray.x = App->input->GetMouseX();
+			ray.y = App->input->GetMouseY();
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		{
+			circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10));
+			circles.getLast()->data->listener = this;
+			circles.getLast()->data->body->SetBullet(true);
+		}
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -418,6 +421,43 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
 
+	if (gameState == GameState::NEW_GAME)
+	{
+		App->renderer->Blit(title, 0, 0, false);
+		score = 0;
+		if (App->input->GetKey(SDL_SCANCODE_RETURN))
+		{
+			gameState = GameState::PLAYING;
+		}
+	}
+
+	//Score system & balls
+	if (score > 9999999)
+	{
+		score = 9999999;
+	}
+	if (score > highScore)
+	{
+		highScore = score;
+	}
+
+	App->fonts->BlitText(208, 725, font, "SCORE:");
+	sprintf_s(scoreText, 14, "%07d", score);
+	App->fonts->BlitText(295, 725, font, scoreText);
+
+	App->fonts->BlitText(240, 625, font, "HIGH SCORE");
+	sprintf_s(highScoreText, 14, "%07d", highScore);
+	App->fonts->BlitText(260, 645, font, highScoreText);
+
+	App->fonts->BlitText(210, 675, font, "PREVIOUS SCORE");
+	sprintf_s(previousScoreText, 14, "%7d", previousScore);
+	App->fonts->BlitText(215, 695, font, previousScoreText);
+
+
+	App->fonts->BlitText(25, 950, font, "BALLS LEFT:");
+	sprintf_s(ballsText, 2, "%1d", balls);
+	App->fonts->BlitText(185, 950, font, ballsText);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -442,4 +482,3 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
 	}*/
 }
-

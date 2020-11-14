@@ -65,7 +65,31 @@ public:
 	SDL_Texture* circle;
 	SDL_Texture* stage = nullptr;
 	SDL_Texture* bumper = nullptr;
+	SDL_Texture* title = nullptr;
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
+
+	//Game and ball states
+	enum GameState
+	{
+		NEW_GAME,
+		PLAYING,
+		BALL_LOST,
+		GAME_OVER,
+	};
+	GameState gameState = GameState::NEW_GAME;
+
+	bool isBallAlive = false;
+
+	//Score system and font
+	int font = -1;
+	int score = 0;
+	int highScore = 0;
+	int previousScore = 0;
+	int balls = 0;
+	char scoreText[14] = { "\0" };
+	char highScoreText[14] = { "\0" };
+	char previousScoreText[14] = { "\0" };
+	char ballsText[2]= { "\0" };
 };
