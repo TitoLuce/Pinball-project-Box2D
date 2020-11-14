@@ -71,8 +71,11 @@ public:
 	};
 
 	Flipper* leftFlipper = new Flipper;
+	SDL_Rect leftrect = {};
 	Flipper* topFlipper = new Flipper;
+	SDL_Rect toprect = {};
 	Flipper* rightFlipper = new Flipper;
+	SDL_Rect rightrect = {};
 
 
 	//Lights stuff

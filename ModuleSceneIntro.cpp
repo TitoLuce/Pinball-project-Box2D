@@ -19,8 +19,6 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	lights.light_on_rect.w = 13;
 	lights.light_on_rect.h = 13;
 
-	
-
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -302,6 +300,11 @@ bool ModuleSceneIntro::Start()
 	obj5->listener = this;
 
 
+	//ball
+
+	circles.add(App->physics->CreateCircle(596, 894, 10));
+	circles.getLast()->data->listener = this;
+	circles.getLast()->data->body->SetBullet(true);
 
 	//create circles that will be the bumpers
 
@@ -325,24 +328,27 @@ bool ModuleSceneIntro::Start()
 	leftFlipper->rotor = App->physics->CreateCircleStatic(205, 885, 4);
 	leftFlipper->polygon = App->physics->CreateRectangle(209, 920, 90, 26);
 	App->physics->CreateRevoluteJoint(leftFlipper->polygon, athing, leftFlipper->rotor, bthing, 15.0f);
+	leftFlipper->drawingRect = { 140, 0, 90, 60 };
 	flippers.add(leftFlipper);
 	
 	
 	topFlipper->rotor = App->physics->CreateCircleStatic(268, 405, 4);
 	topFlipper->polygon = App->physics->CreateRectangle(270, 390, 60, 20);
 	App->physics->CreateRevoluteJoint(topFlipper->polygon, athing, topFlipper->rotor, bthing, 15.0f);
+	topFlipper->drawingRect = {0,0,0,0};
 	flippers.add(topFlipper);
-
+	
 
 
 	athing = { 0.6, 0 };
-
 
 	
 	rightFlipper->rotor = App->physics->CreateCircleStatic(395, 885, 4);
 	rightFlipper->polygon = App->physics->CreateRectangle(209, 904, 90, 26);
 	App->physics->CreateRevoluteJoint(rightFlipper->polygon, athing, rightFlipper->rotor, bthing, 15.0f);
+	rightFlipper->drawingRect = {0,0,0,0};
 	flippers.add(rightFlipper);
+	
 
 
 
@@ -383,7 +389,8 @@ update_status ModuleSceneIntro::Update()
 			}
 
 		}
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/) {
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/) 
+		{
 			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 			{
 				p2List_item<Flipper*>* f = flippers.getFirst();
@@ -406,12 +413,7 @@ update_status ModuleSceneIntro::Update()
 			ray.y = App->input->GetMouseY();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-		{
-			circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10));
-			circles.getLast()->data->listener = this;
-			circles.getLast()->data->body->SetBullet(true);
-		}
+		
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -432,16 +434,6 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(bumper, 221 , 274);
 
 
-
-	p2List_item<PhysBody*>* c = circles.getFirst();
-
-	while (c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
-	}
 
 	
 	// ray -----------------
@@ -494,7 +486,32 @@ update_status ModuleSceneIntro::Update()
 	sprintf_s(ballsText, 2, "%1d", balls);
 	App->fonts->BlitText(185, 950, font, ballsText);
 
-	App->renderer->Blit(flipersTex, 209 - 20, 920 - 40,NULL, 1.0f, leftFlipper->polygon->GetRotation());
+
+
+	//flippers blitters
+
+	p2List_item<Flipper*>* f = flippers.getFirst();
+	while (f != NULL)
+	{
+		int x, y;
+		f->data->polygon->GetPosition(x, y);
+		App->renderer->Blit(flipersTex, x, y - 5, &f->data->drawingRect, 1.0f, f->data->polygon->GetRotation());
+		f = f->next;
+	}
+
+	App->renderer->Blit(flipersTex, 209 - leftrect.w / 2, 920 - leftrect.h / 2, &leftrect, 1.0f, leftFlipper->polygon->GetRotation());
+
+
+
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN && App->physics->debug)
+	{
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10));
+		circles.getLast()->data->listener = this;
+		circles.getLast()->data->body->SetBullet(true);
+	}
+
+
+
 
 	// Lights Logic
 
@@ -550,6 +567,16 @@ update_status ModuleSceneIntro::Update()
 		LOG("Light 8 turn ON");
 	}
 
+
+	p2List_item<PhysBody*>* c = circles.getFirst();
+
+	while (c != NULL)
+	{
+		int x, y;
+		c->data->GetPosition(x, y);
+		App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
+		c = c->next;
+	}
 
 
 	return UPDATE_CONTINUE;
