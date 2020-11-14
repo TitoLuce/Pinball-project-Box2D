@@ -6,6 +6,29 @@
 
 class PhysBody;
 
+struct Light {
+	PhysBody* fLight1;
+	PhysBody* fLight2;
+	PhysBody* fLight3;
+	PhysBody* fLight4;
+	PhysBody* fLight5;
+	PhysBody* fLight6;
+	PhysBody* fLight7;
+	PhysBody* fLight8;
+	bool light1 = false;
+	bool light2 = false;
+	bool light3 = false;
+	bool light4 = false;
+	bool light5 = false;
+	bool light6 = false;
+	bool light7 = false;
+	bool light8 = false;
+	int lightTimer1;
+	SDL_Rect flight_rect;
+	SDL_Rect light_on_rect;
+	bool light_time = false;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -43,9 +66,18 @@ public:
 	{
 		PhysBody* polygon;
 		PhysBody* rotor;
+		SDL_Rect drawingRect;
 		
 	};
 
+	Flipper* leftFlipper = new Flipper;
+	Flipper* topFlipper = new Flipper;
+	Flipper* rightFlipper = new Flipper;
+
+
+	//Lights stuff
+	Light lights;
+	
 
 	p2List<Flipper*> flippers;
 
@@ -63,6 +95,8 @@ public:
 	SDL_Texture* stage = nullptr;
 	SDL_Texture* bumper = nullptr;
 	SDL_Texture* title = nullptr;
+	SDL_Texture* lightsTex = nullptr;
+	SDL_Texture* flipersTex = nullptr;
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
@@ -89,4 +123,7 @@ public:
 	char highScoreText[14] = { "\0" };
 	char previousScoreText[14] = { "\0" };
 	char ballsText[2]= { "\0" };
+
 };
+
+

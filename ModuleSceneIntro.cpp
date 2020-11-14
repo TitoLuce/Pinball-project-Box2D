@@ -13,6 +13,14 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	circle  = NULL;
 	ray_on = false;
 	sensed = false;
+
+	lights.light_on_rect.x = 28;
+	lights.light_on_rect.y = 57;
+	lights.light_on_rect.w = 13;
+	lights.light_on_rect.h = 13;
+
+	
+
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -31,9 +39,30 @@ bool ModuleSceneIntro::Start()
 	circle = App->textures->Load("pinball/wheel.png");
 	bumper = App->textures->Load("pinball/Bumper.png");
 	title = App->textures->Load("pinball/Title.png");
+	lightsTex = App->textures->Load("pinball/Sensors.png");
+	flipersTex = App->textures->Load("pinball/Flipers.png");
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+
+	//Lights
+	lights.fLight1 = App->physics->CreateRectangleSensor(200, 606, 15, 15);
+	//lights.fLight2 = App->physics->CreateRectangleSensor(25, 298, 15, 15);
+	//lights.fLight3 = App->physics->CreateRectangleSensor(41, 200, 15, 15);
+	//lights.fLight4 = App->physics->CreateRectangleSensor(90, 100, 15, 15);
+	//lights.fLight5 = App->physics->CreateRectangleSensor(187, 55, 15, 15);
+	//lights.fLight6 = App->physics->CreateRectangleSensor(270, 55, 15, 15);
+	//lights.fLight7 = App->physics->CreateRectangleSensor(440, 413, 15, 15);
+	//lights.fLight8 = App->physics->CreateRectangleSensor(415, 305, 15, 15);
+	lights.fLight1->listener = this;
+	//lights.fLight2->listener = this;
+	//lights.fLight3->listener = this;
+	//lights.fLight4->listener = this;
+	//lights.fLight5->listener = this;
+	//lights.fLight6->listener = this;
+	//lights.fLight7->listener = this;
+	//lights.fLight8->listener = this;
+	lights.lightTimer1 = 0;
 
 	//Chains
 	int stage[156] = {
@@ -292,13 +321,13 @@ bool ModuleSceneIntro::Start()
 	b2Vec2 athing = { -0.6, 0 };
 	b2Vec2 bthing = { 0, 0 };
 
-	Flipper* leftFlipper = new Flipper;
+	
 	leftFlipper->rotor = App->physics->CreateCircleStatic(205, 885, 4);
 	leftFlipper->polygon = App->physics->CreateRectangle(209, 920, 90, 26);
 	App->physics->CreateRevoluteJoint(leftFlipper->polygon, athing, leftFlipper->rotor, bthing, 15.0f);
 	flippers.add(leftFlipper);
-
-	Flipper* topFlipper = new Flipper;
+	
+	
 	topFlipper->rotor = App->physics->CreateCircleStatic(268, 405, 4);
 	topFlipper->polygon = App->physics->CreateRectangle(270, 390, 60, 20);
 	App->physics->CreateRevoluteJoint(topFlipper->polygon, athing, topFlipper->rotor, bthing, 15.0f);
@@ -309,7 +338,7 @@ bool ModuleSceneIntro::Start()
 	athing = { 0.6, 0 };
 
 
-	Flipper* rightFlipper = new Flipper;
+	
 	rightFlipper->rotor = App->physics->CreateCircleStatic(395, 885, 4);
 	rightFlipper->polygon = App->physics->CreateRectangle(209, 904, 90, 26);
 	App->physics->CreateRevoluteJoint(rightFlipper->polygon, athing, rightFlipper->rotor, bthing, 15.0f);
@@ -402,6 +431,8 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(bumper, 302 , 219 );
 	App->renderer->Blit(bumper, 221 , 274);
 
+
+
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
 	while (c != NULL)
@@ -463,6 +494,64 @@ update_status ModuleSceneIntro::Update()
 	sprintf_s(ballsText, 2, "%1d", balls);
 	App->fonts->BlitText(185, 950, font, ballsText);
 
+	App->renderer->Blit(flipersTex, 209 - 20, 920 - 40,NULL, 1.0f, leftFlipper->polygon->GetRotation());
+
+	// Lights Logic
+
+	if (lights.light1) {
+		LOG("Light 1 turn ON");
+		App->renderer->Blit(lightsTex, 200-6, 606-6, &lights.light_on_rect);
+		lights.lightTimer1++;
+		if (lights.lightTimer1 == 50)
+		{
+			lights.light1 = false;
+			lights.lightTimer1 = 0;
+		}
+	}
+	
+
+	if (lights.light2) {
+		LOG("Light 2 turn ON");
+	}
+
+
+
+	if (lights.light3) {
+		LOG("Light 3 turn ON");
+	}
+
+
+
+	if (lights.light4) {
+		LOG("Light 4 turn ON");
+	}
+
+
+
+	if (lights.light5) {
+		LOG("Light 5 turn ON");
+	}
+
+
+
+	if (lights.light6) {
+		LOG("Light 6 turn ON");
+	}
+
+
+
+	if (lights.light7) {
+		LOG("Light 7 turn ON");
+	}
+
+
+
+	if (lights.light8) {
+		LOG("Light 8 turn ON");
+	}
+
+
+
 	return UPDATE_CONTINUE;
 }
 
@@ -502,6 +591,60 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		//do right triangle sound
 
 	}
+	if (bodyA == lights.fLight1)
+	{
+		lights.light1 = true;
+		App->scene_intro->score += 10;
+
+	}
+	/*if (bodyA == arrow.arrow2)
+	{
+		arrow.light2 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+
+	}
+	if (bodyA == arrow.arrow3)
+	{
+		arrow.light3 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+
+	}
+	if (bodyA == arrow.arrow4)
+	{
+		arrow.light4 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+
+	}
+	if (bodyA == arrow.arrow5)
+	{
+		arrow.light5 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+
+	}
+	if (bodyA == arrow.arrow6)
+	{
+		arrow.light6 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+
+	}
+	if (bodyA == arrow.arrow7)
+	{
+		arrow.light7 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+
+	}
+	if (bodyA == arrow.arrow8)
+	{
+		arrow.light8 = true;
+		App->ui->score += 100;
+		App->audio->PlayFx(pink_light_fx);
+	}*/
 
 
 }
