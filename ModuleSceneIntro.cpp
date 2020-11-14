@@ -220,7 +220,7 @@ bool ModuleSceneIntro::Start()
 	171, 821,
 	113, 794
 	};
-	obj4 = App->physics->CreateGround(0, 0, leftBot, 18);
+	obj4 = App->physics->CreateGround(0, 0, leftBot, 18); //left triangle 
 	int rightBot[24] = {
 	387, 816,
 	387, 791,
@@ -235,7 +235,7 @@ bool ModuleSceneIntro::Start()
 	411, 821,
 	394, 820
 	};
-	obj5 = App->physics->CreateGround(0, 0, rightBot, 24);
+	obj5 = App->physics->CreateGround(0, 0, rightBot, 24); //right triangle
 	int leftBase[26] = {
 	52, 688,
 	52, 668,
@@ -269,13 +269,18 @@ bool ModuleSceneIntro::Start()
 	};
 	obj7 = App->physics->CreateGround(0, 0, rightBase, 26);
 
+	obj4->listener = this;
+	obj5->listener = this;
+
+
+
 	//create circles that will be the bumpers
 
-	bumper1 = App->physics->CreateCircleStatic(188+ 35, 178+ 35, 35);
-	bumper2 = App->physics->CreateCircleStatic(302 + 35, 111+ 35, 35);
-	bumper3 = App->physics->CreateCircleStatic(402+ 35, 152+ 35, 35);
-	bumper4 = App->physics->CreateCircleStatic(302 + 35, 219+ 35, 35);
-	bumper5 = App->physics->CreateCircleStatic(221+ 35, 274+ 35, 35);
+	bumper1 = App->physics->CreateCircleStatic(188 + 35, 178 + 35, 35);
+	bumper2 = App->physics->CreateCircleStatic(302 + 35, 111 + 35, 35);
+	bumper3 = App->physics->CreateCircleStatic(402 + 35, 152 + 35, 35);
+	bumper4 = App->physics->CreateCircleStatic(302 + 35, 219 + 35, 35);
+	bumper5 = App->physics->CreateCircleStatic(221 + 35, 274 + 35, 35);
 	bumper1->listener = this;
 	bumper2->listener = this;
 	bumper3->listener = this;
@@ -467,18 +472,36 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		App->audio->PlayFx(bonus_fx);
 	}
 
-	/*
-	int x, y;
 
-	if(bodyA)
-	{
-		bodyA->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
+
+	if (bodyA == bumper1 || bodyA == bumper2 || bodyA == bumper3 || bodyA == bumper4 || bodyA == bumper5) {
+		b2Vec2 force(bodyB->body->GetWorldCenter() - bodyA->body->GetWorldCenter());
+		force *= 5;
+		bodyB->body->ApplyLinearImpulse(force, bodyB->body->GetWorldCenter(), true);
+
+		App->scene_intro->score += 100;
 	}
 
-	if(bodyB)
-	{
-		bodyB->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
-	}*/
+	 
+	if (bodyA == obj4) {  //left triangle
+
+		bodyB->body->ApplyLinearImpulse(b2Vec2(0.8, -2.5), bodyB->body->GetWorldCenter(), true);
+		App->scene_intro->score += 100;
+		
+		//do left triangle animation
+		//do left triangle sound
+
+	}
+
+	if (bodyA == obj5) {  //right triangle
+
+		bodyB->body->ApplyLinearImpulse(b2Vec2(-0.8, -2.5), bodyB->body->GetWorldCenter(), true);
+		App->scene_intro->score += 100;
+
+		//do right triangle animation
+		//do right triangle sound
+
+	}
+
+
 }
