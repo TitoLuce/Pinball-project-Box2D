@@ -80,6 +80,7 @@ bool ModuleSceneIntro::Start()
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	ding_fx = App->audio->LoadFx("pinball/ding.ogg");
 	
 
 	//Blocker
@@ -523,8 +524,7 @@ update_status ModuleSceneIntro::Update()
 	if (gameState == GameState::PLAYING)
 	{
 		if (once)
-		{	
-
+		{
 			score = 0;
 			circles.add(App->physics->CreateCircle(596, 894, 10));
 			circles.getLast()->data->listener = this;
@@ -533,26 +533,18 @@ update_status ModuleSceneIntro::Update()
 			if (musicOnce) 
 			{
 				App->audio->PlayMusic("pinball/Off Pepper Steak (Extended).ogg");
-				Mix_VolumeMusic(69); 
+				Mix_VolumeMusic(50);
 				musicOnce = false;
 			}
 			once = false;
 		}
 	}
 
-	if (gameState == GameState::BALL_LOST)
-	{
-		//Will do some more stuff here when possible
-		once = true;
-		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
-		{
-			gameState = GameState::PLAYING;
-		}
-	}
-
 	if (gameState == GameState::GAME_OVER)
 	{
 		balls = 0;
+		App->fonts->BlitText(230, 525, font, "GAME OVER");
+		 App->fonts->BlitText(170, 545, font, "PRESS UP TO RESTART");
 		//Will do some more stuff here when possible
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 		{
@@ -579,14 +571,26 @@ update_status ModuleSceneIntro::Update()
 	App->fonts->BlitText(260, 645, font, highScoreText);
 
 	App->fonts->BlitText(210, 675, font, "PREVIOUS SCORE");
-	sprintf_s(previousScoreText, 14, "%7d", previousScore);
-	App->fonts->BlitText(215, 695, font, previousScoreText);
+	sprintf_s(previousScoreText, 14, "%07d", previousScore);
+	App->fonts->BlitText(260, 695, font, previousScoreText);
 
 
 	App->fonts->BlitText(25, 950, font, "BALLS LEFT:");
 	sprintf_s(ballsText, 2, "%1d", balls);
 	App->fonts->BlitText(185, 950, font, ballsText);
 
+	if (sensorBonus)
+	{
+		App->fonts->BlitText(170, 525, font, "SENSOR BONUS +15000");
+		if (timeCounter < 100)
+		{
+			timeCounter++;
+		}
+		else {
+			sensorBonus = false;
+			timeCounter = 0;
+		}
+	}
 
 
 	//flippers blitters
@@ -831,6 +835,7 @@ update_status ModuleSceneIntro::Update()
 			App->scene_intro->score += 15000;
 			bonusScore++;
 		}
+
 		lights.light15 = false;
 		lights.light16 = false;
 		lights.light17 = false;
@@ -843,6 +848,7 @@ update_status ModuleSceneIntro::Update()
 		isHoleActive = false;
 		isBallinHole = false;
 		bonusScore = 0;
+		sensorBonus = true;
 	}
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
@@ -903,7 +909,7 @@ update_status ModuleSceneIntro::Update()
 			springPointer->Update();
 			App->renderer->Blit(springTexture, SCREEN_WIDTH - 39, SCREEN_HEIGHT - 75, &springPointer->GetCurrentFrame(), false);
 		}
-		else { spring.Reset(); }
+		else { spring.Reset(); } //Key release
 
 
 	}
@@ -933,16 +939,17 @@ update_status ModuleSceneIntro::Update()
 		}
 	}
 
+	
+
 	return UPDATE_CONTINUE;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	if (bodyA == sensor) {
-
+	if (bodyA == sensor && gameState != GameState::BALL_LOST)
+	{
 		isBallAlive = false;
 		isBlockerTop = false;
-		
 	}
 
 
@@ -1066,47 +1073,47 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyA == lights.fLight15)
 	{
 		lights.light15 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight16)
 	{
 		lights.light16 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight17)
 	{
 		lights.light17 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight18)
 	{
 		lights.light18 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight19)
 	{
 		lights.light19 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight20)
 	{
 		lights.light20 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight21)
 	{
 		lights.light21 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight22)
 	{
 		lights.light22 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 	if (bodyA == lights.fLight23)
 	{
 		lights.light23 = true;
-
+		App->audio->PlayFx(ding_fx);
 	}
 
 	// for the top blocker

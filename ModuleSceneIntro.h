@@ -170,6 +170,7 @@ public:
 	SDL_Texture* lightsTex = nullptr;
 	SDL_Texture* flippersTex = nullptr;
 	uint bonus_fx;
+	uint ding_fx;
 	p2Point<int> ray;
 	bool ray_on;
 
@@ -188,6 +189,9 @@ public:
 	bool isBallAlive;
 
 	//Score system and font
+	bool sensorBonus = false;
+	bool perfectShotBonus = false;
+	int timeCounter = 0;
 	int font = -1;
 	int score = 0;
 	int highScore = 0;

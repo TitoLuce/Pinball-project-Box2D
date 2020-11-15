@@ -43,7 +43,6 @@ bool ModuleAudio::Init()
 		LOG("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 		ret = true;
 	}
-
 	return ret;
 }
 
@@ -160,6 +159,7 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 	
 	if(fx.at(id-1, chunk) == true)
 	{
+		Mix_VolumeChunk(chunk, 20);
 		Mix_PlayChannel(-1, chunk, repeat);
 		ret = true;
 	}
