@@ -116,6 +116,15 @@ public:
 	//PhysBody* rightFliperB;
 	//PhysBody* topFliperB;
 
+	// Top Blocker
+	PhysBody* blockerSens;
+	PhysBody* bigBlock;
+	bool isBlockerTop;
+	SDL_Texture* blockerTex = nullptr;
+
+
+
+
 	struct Flipper
 	{
 		PhysBody* polygon;

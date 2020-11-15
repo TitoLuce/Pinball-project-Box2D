@@ -14,6 +14,7 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	circle  = NULL;
 	ray_on = false;
 	sensed = false;
+	isBlockerTop = false;
 
 	//Normal animation
 	for (int i = 0; i < 6; i++)
@@ -65,9 +66,16 @@ bool ModuleSceneIntro::Start()
 	title = App->textures->Load("pinball/Title.png");
 	lightsTex = App->textures->Load("pinball/Sensors.png");
 	flippersTex = App->textures->Load("pinball/Flipers.png");
+	blockerTex = App->textures->Load("pinball/BigBlocker.png");
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+
+	//Blocker
+	
+	blockerSens = App->physics->CreateRectangleSensor(316,78,20,40);
+	blockerSens->listener = this;
+
 
 	//Lights
 	lights.fLight1 = App->physics->CreateRectangleSensor(146, 60, 15, 15);
@@ -713,40 +721,66 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	if (lights.light15) {
-		App->renderer->Blit(lightsTex, 178 - 6, 452 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 185 - 6, 455 - 6, &lights.smally);
 
 	}
 
 	if (lights.light16) {
-		App->renderer->Blit(lightsTex, 209 - 6, 444 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 218 - 6, 446 - 6, &lights.smally);
 	}
 
 	if (lights.light17) {
-		App->renderer->Blit(lightsTex, 238 - 6, 436 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 246 - 6, 438 - 6, &lights.smally);
 	}
 
 	if (lights.light18) {
-		App->renderer->Blit(lightsTex, 100 - 6, 512 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 100 - 6, 514 - 6, &lights.smally);
 	}
 
 	if (lights.light19) {
-		App->renderer->Blit(lightsTex, 84 - 6, 530 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 84 - 6, 534 - 6, &lights.smally);
 	}
 
 	if (lights.light20) {
-		App->renderer->Blit(lightsTex, 66 - 6, 551 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 69 - 6, 552 - 6, &lights.smally);
 	}
 
 	if (lights.light21) {
-		App->renderer->Blit(lightsTex, 500 - 6, 509 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 499 - 6, 511 - 6, &lights.smally);
 	}
 
 	if (lights.light22) {
-		App->renderer->Blit(lightsTex, 514 - 6, 529 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 515 - 6, 533 - 6, &lights.smally);
 	}
 
 	if (lights.light23) {
-		App->renderer->Blit(lightsTex, 532 - 6, 552 - 6, &lights.smally);
+		App->renderer->Blit(lightsTex, 530 - 6, 552 - 6, &lights.smally);
+	}
+
+	// Blocker top logic
+	if (isBlockerTop == true)
+	{
+		int BigBlockerP[28] = {
+126, 106,
+96, 75,
+74, 55,
+47, 39,
+24, 27,
+0, 19,
+0, 0,
+38, 0,
+81, 15,
+119, 32,
+153, 56,
+143, 58,
+127, 73,
+127, 102
+		};
+		if (bigBlock == nullptr)
+		{
+			bigBlock = App->physics->CreateGround(338, 46, BigBlockerP, 28);
+		}
+		App->renderer->Blit(blockerTex, 342 - 10, 66 - 20, NULL);
 	}
 
 	p2List_item<PhysBody*>* c = circles.getFirst();
@@ -981,5 +1015,11 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		lights.light23 = true;
 
+	}
+
+	// for the top blocker
+	if (bodyA == blockerSens)
+	{
+		isBlockerTop = true;
 	}
 }
