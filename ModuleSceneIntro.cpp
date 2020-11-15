@@ -439,6 +439,13 @@ bool ModuleSceneIntro::Start()
 	flippers.add(rightFlipper);
 	
 
+	//Kicker -----------------------------------------------------------------------------------------
+	kicker.pivot = App->physics->CreateStaticRectangle(608, 947, 15, 8);
+	kicker.mobile = App->physics->CreateRectangle(594, 909, 15, 20);
+	App->physics->CreatePrismaticJoint(kicker.mobile, { 0,0 }, kicker.pivot, { 0,0 }, { 0,1 }, 1.9f);
+
+
+	//death sensor
 
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 10);
@@ -529,7 +536,7 @@ update_status ModuleSceneIntro::Update()
 		if (once)
 		{
 			score = 0;
-			circles.add(App->physics->CreateCircle(596, 894, 10));
+			circles.add(App->physics->CreateCircle(596, 644, 10));
 			circles.getLast()->data->listener = this;
 			circles.getLast()->data->body->SetBullet(true);
 
@@ -624,6 +631,9 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(flippersTex, x, y, &f->data->drawingRect, 1.0f, f->data->polygon->GetRotation());
 		f = f->next;
 	}
+
+
+	//debug option
 
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN && App->physics->debug)
 	{
@@ -925,12 +935,19 @@ update_status ModuleSceneIntro::Update()
 			ray.y = App->input->GetMouseY();
 		}
 
+
+		kicker.mobile->body->ApplyForce({ 0,-18 }, { 0,0 }, true);
+		
 		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		{
+			kicker.mobile->body->ApplyForce({ 0,18 }, { 0,0 }, true);
 			springPointer->Update();
 			App->renderer->Blit(springTexture, SCREEN_WIDTH - 39, SCREEN_HEIGHT - 75, &springPointer->GetCurrentFrame(), false);
 		}
-		else { spring.Reset(); } //Key release
+		else { 
+			kicker.mobile->body->ApplyForce({ 0,-110 }, { 0,0 }, true);
+			spring.Reset(); 
+		} //Key release
 
 
 	}
@@ -955,7 +972,7 @@ update_status ModuleSceneIntro::Update()
 		balls--;
 		if (balls >= 0)
 		{
-			circles.add(App->physics->CreateCircle(596, 894, 10));
+			circles.add(App->physics->CreateCircle(596, 644, 10));
 			circles.getLast()->data->listener = (Module*)App->player;
 		}
 	}

@@ -139,6 +139,12 @@ public:
 		
 	};
 
+	struct Kicker
+	{
+		PhysBody* pivot;
+		PhysBody* mobile;
+	};
+
 	Flipper* leftFlipper = new Flipper;
 	SDL_Rect leftrect = {};
 	Flipper* topFlipper = new Flipper;
@@ -152,6 +158,7 @@ public:
 	
 
 	p2List<Flipper*> flippers;
+	Kicker kicker;
 
 
 	PhysBody* bumper1 = nullptr;
