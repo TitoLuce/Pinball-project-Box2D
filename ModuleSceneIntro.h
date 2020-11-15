@@ -8,6 +8,7 @@
 class PhysBody;
 
 struct Light {
+
 	PhysBody* fLight1;
 	PhysBody* fLight2;
 	PhysBody* fLight3;
@@ -16,6 +17,22 @@ struct Light {
 	PhysBody* fLight6;
 	PhysBody* fLight7;
 	PhysBody* fLight8;
+	PhysBody* fLight9;
+	PhysBody* fLight10;
+	PhysBody* fLight11;
+	PhysBody* fLight12;
+	PhysBody* fLight13;
+	PhysBody* fLight14;
+	PhysBody* fLight15;
+	PhysBody* fLight16;
+	PhysBody* fLight17;
+	PhysBody* fLight18;
+	PhysBody* fLight19;
+	PhysBody* fLight20;
+	PhysBody* fLight21;
+	PhysBody* fLight22;
+	PhysBody* fLight23;
+	
 	bool light1 = false;
 	bool light2 = false;
 	bool light3 = false;
@@ -24,10 +41,46 @@ struct Light {
 	bool light6 = false;
 	bool light7 = false;
 	bool light8 = false;
+	bool light9 = false;
+	bool light10 = false;
+	bool light11 = false;
+	bool light12 = false;
+	bool light13 = false;
+	bool light14 = false;
+	bool light15 = false;
+	bool light16 = false;
+	bool light17 = false;
+	bool light18 = false;
+	bool light19 = false;
+	bool light20 = false;
+	bool light21 = false;
+	bool light22 = false;
+	bool light23 = false;
+		
 	int lightTimer1;
-	SDL_Rect flight_rect;
-	SDL_Rect light_on_rect;
-	bool light_time = false;
+	int lightTimer2;
+	int lightTimer3;
+	int lightTimer4;
+	int lightTimer5;
+	int lightTimer6;
+	int lightTimer7;
+	int lightTimer8;
+	int lightTimer9;
+	int lightTimer10;
+	int lightTimer11;
+	int lightTimer12;
+	int lightTimer13;
+	int lightTimer14;
+
+	SDL_Rect arrowLeft = {0,33,22,36};
+	SDL_Rect arrowRight = {43,33,22,36};
+	SDL_Rect arrowLeft1 = {0,15,13,16};
+	SDL_Rect arrowRight1 = {56,15,13,16};
+	SDL_Rect smally = { 28,57,13,13 };
+	SDL_Rect superSmally = {31,15,6,7};
+	SDL_Rect flatTop = { 0,0,20,13 };
+	SDL_Rect flatTopG = { 24,0,19,13 };
+
 };
 
 class ModuleSceneIntro : public Module

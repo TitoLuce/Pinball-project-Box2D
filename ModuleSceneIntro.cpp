@@ -15,11 +15,6 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	ray_on = false;
 	sensed = false;
 
-	lights.light_on_rect.x = 28;
-	lights.light_on_rect.y = 57;
-	lights.light_on_rect.w = 13;
-	lights.light_on_rect.h = 13;
-
 	//Normal animation
 	for (int i = 0; i < 6; i++)
 	{
@@ -75,23 +70,68 @@ bool ModuleSceneIntro::Start()
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
 	//Lights
-	lights.fLight1 = App->physics->CreateRectangleSensor(200, 606, 15, 15);
-	//lights.fLight2 = App->physics->CreateRectangleSensor(25, 298, 15, 15);
-	//lights.fLight3 = App->physics->CreateRectangleSensor(41, 200, 15, 15);
-	//lights.fLight4 = App->physics->CreateRectangleSensor(90, 100, 15, 15);
-	//lights.fLight5 = App->physics->CreateRectangleSensor(187, 55, 15, 15);
-	//lights.fLight6 = App->physics->CreateRectangleSensor(270, 55, 15, 15);
-	//lights.fLight7 = App->physics->CreateRectangleSensor(440, 413, 15, 15);
-	//lights.fLight8 = App->physics->CreateRectangleSensor(415, 305, 15, 15);
+	lights.fLight1 = App->physics->CreateRectangleSensor(146, 60, 15, 15);
+	lights.fLight2 = App->physics->CreateRectangleSensor(78, 94, 15, 15);
+	lights.fLight3 = App->physics->CreateRectangleSensor(56, 118, 15, 15);
+	lights.fLight4 = App->physics->CreateRectangleSensor(44, 148, 15, 15);
+	lights.fLight5 = App->physics->CreateRectangleSensor(36, 180, 15, 15);
+	lights.fLight6 = App->physics->CreateRectangleSensor(36, 210, 15, 15);
+	lights.fLight7 = App->physics->CreateRectangleSensor(64, 400, 15, 20); // <- arrow left start
+	lights.fLight8 = App->physics->CreateRectangleSensor(81, 430, 12, 12);
+	lights.fLight9 = App->physics->CreateRectangleSensor(95, 452, 10, 10);
+	lights.fLight10 = App->physics->CreateRectangleSensor(112, 474, 10, 10);
+	lights.fLight11 = App->physics->CreateRectangleSensor(544, 398, 15, 20); // <- arrow right start
+	lights.fLight12 = App->physics->CreateRectangleSensor(528, 428, 12, 12);
+	lights.fLight13 = App->physics->CreateRectangleSensor(512, 450, 12, 12);
+	lights.fLight14 = App->physics->CreateRectangleSensor(496, 469, 12, 12);
+	lights.fLight15 = App->physics->CreateRectangleSensor(177, 448, 15, 15); // <- top three start
+	lights.fLight16 = App->physics->CreateRectangleSensor(209, 442, 15, 15);
+	lights.fLight17 = App->physics->CreateRectangleSensor(238, 436, 15, 15);
+	lights.fLight18 = App->physics->CreateRectangleSensor(96, 508, 15, 15); // <- left three start
+	lights.fLight19 = App->physics->CreateRectangleSensor(80, 526, 15, 15);
+	lights.fLight20 = App->physics->CreateRectangleSensor(64, 549, 15, 15);
+	lights.fLight21 = App->physics->CreateRectangleSensor(500, 507, 15, 15); // <- right three start
+	lights.fLight22 = App->physics->CreateRectangleSensor(514, 527, 15, 15);
+	lights.fLight23 = App->physics->CreateRectangleSensor(534, 549, 15, 15);
+
 	lights.fLight1->listener = this;
-	//lights.fLight2->listener = this;
-	//lights.fLight3->listener = this;
-	//lights.fLight4->listener = this;
-	//lights.fLight5->listener = this;
-	//lights.fLight6->listener = this;
-	//lights.fLight7->listener = this;
-	//lights.fLight8->listener = this;
+	lights.fLight2->listener = this;
+	lights.fLight3->listener = this;
+	lights.fLight4->listener = this;
+	lights.fLight5->listener = this;
+	lights.fLight6->listener = this;
+	lights.fLight7->listener = this;
+	lights.fLight8->listener = this;
+	lights.fLight9->listener = this;
+	lights.fLight10->listener = this;
+	lights.fLight11->listener = this;
+	lights.fLight12->listener = this;
+	lights.fLight13->listener = this;
+	lights.fLight14->listener = this;
+	lights.fLight15->listener = this;
+	lights.fLight16->listener = this;
+	lights.fLight17->listener = this;
+	lights.fLight18->listener = this;
+	lights.fLight19->listener = this;
+	lights.fLight20->listener = this;
+	lights.fLight21->listener = this;
+	lights.fLight22->listener = this;
+	lights.fLight23->listener = this;
+
 	lights.lightTimer1 = 0;
+	lights.lightTimer2 = 0;
+	lights.lightTimer3 = 0;
+	lights.lightTimer4 = 0;
+	lights.lightTimer5 = 0;
+	lights.lightTimer6 = 0;
+	lights.lightTimer7 = 0;
+	lights.lightTimer8 = 0;
+	lights.lightTimer9 = 0;
+	lights.lightTimer10 = 0;
+	lights.lightTimer11 = 0;
+	lights.lightTimer12 = 0;
+	lights.lightTimer13 = 0;
+	lights.lightTimer14 = 0;
 
 	//Chains
 	int stage[156] = {
@@ -530,11 +570,10 @@ update_status ModuleSceneIntro::Update()
 
 
 
-	// Lights Logic
+	// Lights Logic ----------------------------------------------------------------
 
 	if (lights.light1) {
-		LOG("Light 1 turn ON");
-		App->renderer->Blit(lightsTex, 200-6, 606-6, &lights.light_on_rect);
+		App->renderer->Blit(lightsTex, 147-10, 61-6, &lights.flatTop);
 		lights.lightTimer1++;
 		if (lights.lightTimer1 == 50)
 		{
@@ -543,47 +582,172 @@ update_status ModuleSceneIntro::Update()
 		}
 	}
 	
-
 	if (lights.light2) {
-		LOG("Light 2 turn ON");
+		App->renderer->Blit(lightsTex, 78 - 10, 95 - 6, &lights.flatTop);
+		lights.lightTimer2++;
+		if (lights.lightTimer2 == 50)
+		{
+			lights.light2 = false;
+			lights.lightTimer2 = 0;
+		}
 	}
-
-
 
 	if (lights.light3) {
-		LOG("Light 3 turn ON");
+		App->renderer->Blit(lightsTex, 56 - 10, 118 - 6, &lights.flatTop);
+		lights.lightTimer3++;
+		if (lights.lightTimer3 == 50)
+		{
+			lights.light3 = false;
+			lights.lightTimer3 = 0;
+		}
 	}
-
-
 
 	if (lights.light4) {
-		LOG("Light 4 turn ON");
+		App->renderer->Blit(lightsTex, 44 - 10, 148 - 6, &lights.flatTop);
+		lights.lightTimer4++;
+		if (lights.lightTimer4 == 50)
+		{
+			lights.light4 = false;
+			lights.lightTimer4 = 0;
+		}
 	}
-
-
 
 	if (lights.light5) {
-		LOG("Light 5 turn ON");
+		App->renderer->Blit(lightsTex, 36 - 10, 180 - 6, &lights.flatTopG);
+		lights.lightTimer5++;
+		if (lights.lightTimer5 == 50)
+		{
+			lights.light5 = false;
+			lights.lightTimer5 = 0;
+		}
 	}
-
-
 
 	if (lights.light6) {
-		LOG("Light 6 turn ON");
+		App->renderer->Blit(lightsTex, 38 - 10, 211 - 6, &lights.flatTop);
+		lights.lightTimer6++;
+		if (lights.lightTimer6 == 50)
+		{
+			lights.light6 = false;
+			lights.lightTimer6 = 0;
+		}
 	}
-
-
 
 	if (lights.light7) {
-		LOG("Light 7 turn ON");
+		App->renderer->Blit(lightsTex, 66 - 10, 389 - 6, &lights.arrowLeft);
+		lights.lightTimer7++;
+		if (lights.lightTimer7 == 50)
+		{
+			lights.light7 = false;
+			lights.lightTimer7 = 0;
+		}
 	}
-
-
 
 	if (lights.light8) {
-		LOG("Light 8 turn ON");
+		App->renderer->Blit(lightsTex, 81 - 6, 427 - 6, &lights.arrowLeft1);
+		lights.lightTimer8++;
+		if (lights.lightTimer8 == 50)
+		{
+			lights.light8 = false;
+			lights.lightTimer8 = 0;
+		}
 	}
 
+	if (lights.light9) {
+		App->renderer->Blit(lightsTex, 95 - 5, 452 - 5, &lights.smally);
+		lights.lightTimer9++;
+		if (lights.lightTimer9 == 50)
+		{
+			lights.light9 = false;
+			lights.lightTimer9 = 0;
+		}
+	}
+
+	if (lights.light10) {
+		App->renderer->Blit(lightsTex, 114 - 5, 475 - 5, &lights.superSmally);
+		lights.lightTimer10++;
+		if (lights.lightTimer10 == 50)
+		{
+			lights.light10 = false;
+			lights.lightTimer10 = 0;
+		}
+	}
+
+	if (lights.light11) {
+		App->renderer->Blit(lightsTex, 542 - 10, 396 - 15, &lights.arrowRight);
+		lights.lightTimer11++;
+		if (lights.lightTimer11 == 50)
+		{
+			lights.light11 = false;
+			lights.lightTimer11 = 0;
+		}
+	}
+
+	if (lights.light12) {
+		App->renderer->Blit(lightsTex, 531 - 6, 427 - 6, &lights.arrowRight1);
+		lights.lightTimer12++;
+		if (lights.lightTimer12 == 50)
+		{
+			lights.light12 = false;
+			lights.lightTimer12 = 0;
+		}
+	}
+
+	if (lights.light13) {
+		App->renderer->Blit(lightsTex, 515 - 6, 452 - 6, &lights.smally);
+		lights.lightTimer13++;
+		if (lights.lightTimer13 == 50)
+		{
+			lights.light13 = false;
+			lights.lightTimer13 = 0;
+		}
+	}
+
+	if (lights.light14) {
+		App->renderer->Blit(lightsTex, 503 - 6, 476 - 6, &lights.superSmally);
+		lights.lightTimer14++;
+		if (lights.lightTimer14 == 50)
+		{
+			lights.light14 = false;
+			lights.lightTimer14 = 0;
+		}
+	}
+
+	if (lights.light15) {
+		App->renderer->Blit(lightsTex, 178 - 6, 452 - 6, &lights.smally);
+
+	}
+
+	if (lights.light16) {
+		App->renderer->Blit(lightsTex, 209 - 6, 444 - 6, &lights.smally);
+	}
+
+	if (lights.light17) {
+		App->renderer->Blit(lightsTex, 238 - 6, 436 - 6, &lights.smally);
+	}
+
+	if (lights.light18) {
+		App->renderer->Blit(lightsTex, 100 - 6, 512 - 6, &lights.smally);
+	}
+
+	if (lights.light19) {
+		App->renderer->Blit(lightsTex, 84 - 6, 530 - 6, &lights.smally);
+	}
+
+	if (lights.light20) {
+		App->renderer->Blit(lightsTex, 66 - 6, 551 - 6, &lights.smally);
+	}
+
+	if (lights.light21) {
+		App->renderer->Blit(lightsTex, 500 - 6, 509 - 6, &lights.smally);
+	}
+
+	if (lights.light22) {
+		App->renderer->Blit(lightsTex, 514 - 6, 529 - 6, &lights.smally);
+	}
+
+	if (lights.light23) {
+		App->renderer->Blit(lightsTex, 532 - 6, 552 - 6, &lights.smally);
+	}
 
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
@@ -687,60 +851,135 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		//do right triangle sound
 
 	}
+
+	// Lights Collisions ------------------------------------------------------------
 	if (bodyA == lights.fLight1)
 	{
 		lights.light1 = true;
 		App->scene_intro->score += 10;
 
 	}
-	/*if (bodyA == arrow.arrow2)
+	if (bodyA == lights.fLight2)
 	{
-		arrow.light2 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
+		lights.light2 = true;
+		App->scene_intro->score += 10;
 
 	}
-	if (bodyA == arrow.arrow3)
+	if (bodyA == lights.fLight3)
 	{
-		arrow.light3 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
+		lights.light3 = true;
+		App->scene_intro->score += 10;
 
 	}
-	if (bodyA == arrow.arrow4)
+	if (bodyA == lights.fLight4)
 	{
-		arrow.light4 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
+		lights.light4 = true;
+		App->scene_intro->score += 10;
 
 	}
-	if (bodyA == arrow.arrow5)
+	if (bodyA == lights.fLight5)
 	{
-		arrow.light5 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
+		lights.light5 = true;
+		App->scene_intro->score += 10;
 
 	}
-	if (bodyA == arrow.arrow6)
+	if (bodyA == lights.fLight6)
 	{
-		arrow.light6 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
+		lights.light6 = true;
+		App->scene_intro->score += 10;
 
 	}
-	if (bodyA == arrow.arrow7)
+	if (bodyA == lights.fLight7)
 	{
-		arrow.light7 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
+		lights.light7 = true;
+		App->scene_intro->score += 10;
 
 	}
-	if (bodyA == arrow.arrow8)
+	if (bodyA == lights.fLight8)
 	{
-		arrow.light8 = true;
-		App->ui->score += 100;
-		App->audio->PlayFx(pink_light_fx);
-	}*/
+		lights.light8 = true;
+		App->scene_intro->score += 10;
 
+	}
+	if (bodyA == lights.fLight9)
+	{
+		lights.light9 = true;
+		App->scene_intro->score += 10;
 
+	}
+	if (bodyA == lights.fLight10)
+	{
+		lights.light10 = true;
+		App->scene_intro->score += 10;
+
+	}
+	if (bodyA == lights.fLight11)
+	{
+		lights.light11 = true;
+		App->scene_intro->score += 10;
+
+	}
+	if (bodyA == lights.fLight12)
+	{
+		lights.light12 = true;
+		App->scene_intro->score += 10;
+
+	}
+	if (bodyA == lights.fLight13)
+	{
+		lights.light13 = true;
+		App->scene_intro->score += 10;
+
+	}
+	if (bodyA == lights.fLight14)
+	{
+		lights.light14 = true;
+		App->scene_intro->score += 10;
+
+	}
+	if (bodyA == lights.fLight15)
+	{
+		lights.light15 = true;
+
+	}
+	if (bodyA == lights.fLight16)
+	{
+		lights.light16 = true;
+
+	}
+	if (bodyA == lights.fLight17)
+	{
+		lights.light17 = true;
+
+	}
+	if (bodyA == lights.fLight18)
+	{
+		lights.light18 = true;
+
+	}
+	if (bodyA == lights.fLight19)
+	{
+		lights.light19 = true;
+
+	}
+	if (bodyA == lights.fLight20)
+	{
+		lights.light20 = true;
+
+	}
+	if (bodyA == lights.fLight21)
+	{
+		lights.light21 = true;
+
+	}
+	if (bodyA == lights.fLight22)
+	{
+		lights.light22 = true;
+
+	}
+	if (bodyA == lights.fLight23)
+	{
+		lights.light23 = true;
+
+	}
 }
