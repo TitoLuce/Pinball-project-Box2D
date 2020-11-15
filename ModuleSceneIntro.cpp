@@ -15,6 +15,9 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	ray_on = false;
 	sensed = false;
 	isBlockerTop = false;
+	isHoleActive = false;
+	isBallinHole = false;
+
 
 	//Normal animation
 	for (int i = 0; i < 6; i++)
@@ -60,6 +63,8 @@ bool ModuleSceneIntro::Start()
 	isBallAlive = true;
 
 	bonusScore = 0;
+	hole = App->physics->CreateRectangleSensor(482, 350, 15, 15);
+	hole->listener = this;
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	
@@ -102,9 +107,9 @@ bool ModuleSceneIntro::Start()
 	lights.fLight12 = App->physics->CreateRectangleSensor(528, 428, 12, 12);
 	lights.fLight13 = App->physics->CreateRectangleSensor(512, 450, 12, 12);
 	lights.fLight14 = App->physics->CreateRectangleSensor(496, 469, 12, 12);
-	lights.fLight15 = App->physics->CreateRectangleSensor(177, 448, 15, 15); // <- top three start
-	lights.fLight16 = App->physics->CreateRectangleSensor(209, 442, 15, 15);
-	lights.fLight17 = App->physics->CreateRectangleSensor(238, 436, 15, 15);
+	lights.fLight15 = App->physics->CreateRectangleSensor(182, 452, 15, 15); // <- top three start
+	lights.fLight16 = App->physics->CreateRectangleSensor(214, 447, 15, 15);
+	lights.fLight17 = App->physics->CreateRectangleSensor(243, 441, 15, 15);
 	lights.fLight18 = App->physics->CreateRectangleSensor(96, 508, 15, 15); // <- left three start
 	lights.fLight19 = App->physics->CreateRectangleSensor(80, 526, 15, 15);
 	lights.fLight20 = App->physics->CreateRectangleSensor(64, 549, 15, 15);
@@ -528,7 +533,7 @@ update_status ModuleSceneIntro::Update()
 			if (musicOnce) 
 			{
 				App->audio->PlayMusic("pinball/Off Pepper Steak (Extended).ogg");
-				Mix_VolumeMusic(0); //put 69
+				Mix_VolumeMusic(69); 
 				musicOnce = false;
 			}
 			once = false;
@@ -809,19 +814,36 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(blockerTex, 342 - 10, 66 - 20, NULL);
 	}
 
+
 	// Special combo logic
 	if (lights.light15 == true && lights.light16 == true && lights.light17 == true &&
 		lights.light18 == true && lights.light19 == true && lights.light20 == true &&
 		lights.light21 == true && lights.light22 == true && lights.light23 == true)
 	{
-		if (bonusScore <= 2)
-		{
-			App->scene_intro->score += 5000;
-			bonusScore++;
-		}
+		isHoleActive = true;
 		App->renderer->Blit(holeTex, 472, 338, NULL);
 	}
 
+	if (isHoleActive == true && isBallinHole == true)
+	{
+		if (bonusScore <= 2)
+		{
+			App->scene_intro->score += 15000;
+			bonusScore++;
+		}
+		lights.light15 = false;
+		lights.light16 = false;
+		lights.light17 = false;
+		lights.light18 = false;
+		lights.light19 = false;
+		lights.light20 = false;
+		lights.light21 = false;
+		lights.light22 = false;
+		lights.light23 = false;
+		isHoleActive = false;
+		isBallinHole = false;
+		bonusScore = 0;
+	}
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
 	while (c != NULL)
@@ -1093,5 +1115,9 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		isBlockerTop = true;
 	}
 
+	if (bodyA == hole && isHoleActive == true)
+	{
+		isBallinHole = true;
+	}
 
 }

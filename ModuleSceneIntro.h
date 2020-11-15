@@ -126,7 +126,9 @@ public:
 	SDL_Texture* blockerTex = nullptr;
 
 	SDL_Texture* holeTex = nullptr;
-	
+	bool isHoleActive;
+	bool isBallinHole;
+	PhysBody* hole;
 
 
 	struct Flipper
