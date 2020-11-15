@@ -125,7 +125,8 @@ public:
 	bool isBlockerTop;
 	SDL_Texture* blockerTex = nullptr;
 
-
+	SDL_Texture* holeTex = nullptr;
+	
 
 
 	struct Flipper
@@ -172,6 +173,7 @@ public:
 
 	//Game and ball states
 	bool once = true;
+	bool musicOnce = true;
 	enum GameState
 	{
 		NEW_GAME,
@@ -181,14 +183,15 @@ public:
 	};
 	GameState gameState = GameState::NEW_GAME;
 
-	bool isBallAlive = false;
+	bool isBallAlive;
 
 	//Score system and font
 	int font = -1;
 	int score = 0;
 	int highScore = 0;
 	int previousScore = 0;
-	int balls = 3;
+	int bonusScore;
+	int balls;
 	char scoreText[14] = { "\0" };
 	char highScoreText[14] = { "\0" };
 	char previousScoreText[14] = { "\0" };

@@ -57,6 +57,10 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
+	isBallAlive = true;
+
+	bonusScore = 0;
+
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	
 	//SDL_Texture Loading
@@ -67,9 +71,11 @@ bool ModuleSceneIntro::Start()
 	lightsTex = App->textures->Load("pinball/Sensors.png");
 	flippersTex = App->textures->Load("pinball/Flipers.png");
 	blockerTex = App->textures->Load("pinball/BigBlocker.png");
+	holeTex = App->textures->Load("pinball/BonusHole.png");
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	
 
 	//Blocker
 	
@@ -383,12 +389,6 @@ bool ModuleSceneIntro::Start()
 	obj5->listener = this;
 
 
-	//ball
-
-	circles.add(App->physics->CreateCircle(596, 894, 10));
-	circles.getLast()->data->listener = this;
-	circles.getLast()->data->body->SetBullet(true);
-
 	//create circles that will be the bumpers
 
 	bumper1 = App->physics->CreateCircleStatic(188 + 35, 178 + 35, 35);
@@ -433,7 +433,8 @@ bool ModuleSceneIntro::Start()
 
 
 
-	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
+	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 10);
+	sensor->listener = this;
 
 	//Font
 	font = App->fonts->Load("pinball/Font2.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZÑ123456789.:-+*/_!?0", 1);
@@ -455,6 +456,14 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
+
+	if (balls < 0 && gameState != GAME_OVER)
+	{
+		balls = 0;
+		gameState = GAME_OVER;
+	}
+
+
 	// Prepare for raycast ------------------------------------------------------
 
 	iPoint mouse;
@@ -501,6 +510,7 @@ update_status ModuleSceneIntro::Update()
 		if (App->input->GetKey(SDL_SCANCODE_RETURN))
 		{
 			once = true;
+			balls = 3;
 			gameState = GameState::PLAYING;
 		}
 	}
@@ -508,8 +518,19 @@ update_status ModuleSceneIntro::Update()
 	if (gameState == GameState::PLAYING)
 	{
 		if (once)
-		{
-			App->audio->PlayMusic("pinball/Off Pepper Steak (Extended).ogg");
+		{	
+
+			score = 0;
+			circles.add(App->physics->CreateCircle(596, 894, 10));
+			circles.getLast()->data->listener = this;
+			circles.getLast()->data->body->SetBullet(true);
+
+			if (musicOnce) 
+			{
+				App->audio->PlayMusic("pinball/Off Pepper Steak (Extended).ogg");
+				Mix_VolumeMusic(0); //put 69
+				musicOnce = false;
+			}
 			once = false;
 		}
 	}
@@ -518,7 +539,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		//Will do some more stuff here when possible
 		once = true;
-		if (App->input->GetKey(SDL_SCANCODE_RETURN))
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 		{
 			gameState = GameState::PLAYING;
 		}
@@ -526,8 +547,9 @@ update_status ModuleSceneIntro::Update()
 
 	if (gameState == GameState::GAME_OVER)
 	{
+		balls = 0;
 		//Will do some more stuff here when possible
-		if (App->input->GetKey(SDL_SCANCODE_RETURN))
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 		{
 			gameState = GameState::NEW_GAME;
 		}
@@ -787,6 +809,19 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(blockerTex, 342 - 10, 66 - 20, NULL);
 	}
 
+	// Special combo logic
+	if (lights.light15 == true && lights.light16 == true && lights.light17 == true &&
+		lights.light18 == true && lights.light19 == true && lights.light20 == true &&
+		lights.light21 == true && lights.light22 == true && lights.light23 == true)
+	{
+		if (bonusScore <= 2)
+		{
+			App->scene_intro->score += 5000;
+			bonusScore++;
+		}
+		App->renderer->Blit(holeTex, 472, 338, NULL);
+	}
+
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
 	while (c != NULL)
@@ -847,8 +882,34 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->Blit(springTexture, SCREEN_WIDTH - 39, SCREEN_HEIGHT - 75, &springPointer->GetCurrentFrame(), false);
 		}
 		else { spring.Reset(); }
+
+
 	}
 
+	if (!isBallAlive)
+	{
+		isBallAlive = true;
+		
+		p2List_item<PhysBody*>* c = circles.getFirst();
+		while (c != NULL)
+		{
+			c->data->body->GetWorld()->DestroyBody(c->data->body);
+			c = c->next;
+		}
+		circles.clear();
+		
+		if (bigBlock != nullptr) {
+			bigBlock->body->GetWorld()->DestroyBody(bigBlock->body);
+			bigBlock = nullptr;
+		}
+
+		balls--;
+		if (balls >= 0)
+		{
+			circles.add(App->physics->CreateCircle(596, 894, 10));
+			circles.getLast()->data->listener = (Module*)App->player;
+		}
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -856,7 +917,10 @@ update_status ModuleSceneIntro::Update()
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	if (bodyA == sensor) {
-		App->audio->PlayFx(bonus_fx);
+
+		isBallAlive = false;
+		isBlockerTop = false;
+		
 	}
 
 
@@ -865,7 +929,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		b2Vec2 force(bodyB->body->GetWorldCenter() - bodyA->body->GetWorldCenter());
 		force *= 5;
 		bodyB->body->ApplyLinearImpulse(force, bodyB->body->GetWorldCenter(), true);
-
+		App->audio->PlayFx(bonus_fx);
 		App->scene_intro->score += 100;
 	}
 
@@ -877,6 +941,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		
 		//do left triangle animation
 		//do left triangle sound
+		App->audio->PlayFx(bonus_fx); //provisional
 
 	}
 
@@ -887,6 +952,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 		//do right triangle animation
 		//do right triangle sound
+		App->audio->PlayFx(bonus_fx); //provisional
 
 	}
 
@@ -1026,4 +1092,6 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		isBlockerTop = true;
 	}
+
+
 }
