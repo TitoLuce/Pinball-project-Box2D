@@ -74,7 +74,11 @@ bool ModuleSceneIntro::Start()
 	//Blocker
 	
 	blockerSens = App->physics->CreateRectangleSensor(316,78,20,40);
+	blockerSens2 = App->physics->CreateRectangleSensor(372, 115, 5, 5);
+	blockerSens3 = App->physics->CreateRectangleSensor(390, 159, 25, 5);
 	blockerSens->listener = this;
+	blockerSens2->listener = this;
+	blockerSens3->listener = this;
 
 
 	//Lights
@@ -1018,7 +1022,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	}
 
 	// for the top blocker
-	if (bodyA == blockerSens)
+	if (bodyA == blockerSens || bodyA == blockerSens2 || bodyA == blockerSens3)
 	{
 		isBlockerTop = true;
 	}

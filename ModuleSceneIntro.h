@@ -118,6 +118,9 @@ public:
 
 	// Top Blocker
 	PhysBody* blockerSens;
+	PhysBody* blockerSens2;
+	PhysBody* blockerSens3;
+
 	PhysBody* bigBlock;
 	bool isBlockerTop;
 	SDL_Texture* blockerTex = nullptr;
