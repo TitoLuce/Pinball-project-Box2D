@@ -1,5 +1,12 @@
-# Pinball-project-Box2D
+# Paroleball
+This is an university project made for Phisics 2 of year 2 of Game Design and Development in the UPC.
 
+##Differences with the main game
+  
+  
+  
+ ##Original Game 
+ -[Here](https://virtually-competent.itch.io/paroleball) 
 
 ## Controls
   BASIC CONTROLS:
