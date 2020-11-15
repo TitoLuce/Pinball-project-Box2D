@@ -169,6 +169,7 @@ public:
 
 	PhysBody* sensor;
 	bool sensed;
+	int powerSpring;
 
 	SDL_Texture* circle;
 	SDL_Texture* stage = nullptr;

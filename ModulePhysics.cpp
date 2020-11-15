@@ -374,9 +374,6 @@ update_status ModulePhysics::PostUpdate()
 			currentBody = nullptr;
 		}
 	}
-
-	// TODO 4: If the player releases the mouse button, destroy the joint
-
 	return UPDATE_CONTINUE;
 }
 
