@@ -148,7 +148,7 @@ unsigned int ModuleAudio::LoadFx(const char* path)
 }
 
 // Play WAV
-bool ModuleAudio::PlayFx(unsigned int id, int repeat)
+bool ModuleAudio::PlayFx(unsigned int id, int vol, int repeat)
 {
 	if(IsEnabled() == false)
 		return false;
@@ -159,7 +159,7 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 	
 	if(fx.at(id-1, chunk) == true)
 	{
-		Mix_VolumeChunk(chunk, 20);
+		Mix_VolumeChunk(chunk, vol);
 		Mix_PlayChannel(-1, chunk, repeat);
 		ret = true;
 	}

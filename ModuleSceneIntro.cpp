@@ -958,7 +958,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		b2Vec2 force(bodyB->body->GetWorldCenter() - bodyA->body->GetWorldCenter());
 		force *= 5;
 		bodyB->body->ApplyLinearImpulse(force, bodyB->body->GetWorldCenter(), true);
-		App->audio->PlayFx(bonus_fx);
+		App->audio->PlayFx(bonus_fx,128);
 		App->scene_intro->score += 100;
 	}
 
@@ -970,7 +970,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		
 		//do left triangle animation
 		//do left triangle sound
-		App->audio->PlayFx(bonus_fx); //provisional
+		App->audio->PlayFx(bonus_fx,128); //provisional
 
 	}
 
@@ -981,7 +981,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 		//do right triangle animation
 		//do right triangle sound
-		App->audio->PlayFx(bonus_fx); //provisional
+		App->audio->PlayFx(bonus_fx,128); //provisional
 
 	}
 
@@ -1073,47 +1073,47 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyA == lights.fLight15)
 	{
 		lights.light15 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx,20);
 	}
 	if (bodyA == lights.fLight16)
 	{
 		lights.light16 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight17)
 	{
 		lights.light17 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight18)
 	{
 		lights.light18 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight19)
 	{
 		lights.light19 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight20)
 	{
 		lights.light20 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight21)
 	{
 		lights.light21 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight22)
 	{
 		lights.light22 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 	if (bodyA == lights.fLight23)
 	{
 		lights.light23 = true;
-		App->audio->PlayFx(ding_fx);
+		App->audio->PlayFx(ding_fx, 20);
 	}
 
 	// for the top blocker
