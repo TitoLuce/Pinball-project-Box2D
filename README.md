@@ -8,9 +8,9 @@ This is an university project made for Phisics 2 of year 2 of Game Design and De
   * no controller only support
   * 2 special features have been applied
   * No enemies
-  * The side light switches don't light up, instead tehre are extra lights in fronts of them to signify that they are active
+  * The side light switches don't light up, instead there are extra lights in fronts of them to signify that they are active
   * The kicker acts different than in the game itself
-  * The 
+  * Sound effects and music are different
   
  ## Original Game 
  * [Here](https://virtually-competent.itch.io/paroleball) 
