@@ -3,6 +3,7 @@
 #include "p2List.h"
 #include "p2Point.h"
 #include "Globals.h"
+#include "Animation.h"
 
 class PhysBody;
 
@@ -99,12 +100,13 @@ public:
 	SDL_Texture* bumper = nullptr;
 	SDL_Texture* title = nullptr;
 	SDL_Texture* lightsTex = nullptr;
-	SDL_Texture* flipersTex = nullptr;
+	SDL_Texture* flippersTex = nullptr;
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
 
 	//Game and ball states
+	bool once = true;
 	enum GameState
 	{
 		NEW_GAME,
@@ -121,12 +123,16 @@ public:
 	int score = 0;
 	int highScore = 0;
 	int previousScore = 0;
-	int balls = 0;
+	int balls = 3;
 	char scoreText[14] = { "\0" };
 	char highScoreText[14] = { "\0" };
 	char previousScoreText[14] = { "\0" };
 	char ballsText[2]= { "\0" };
 
+	//"Spring" animation
+	SDL_Texture* springTexture;
+	Animation spring;
+	Animation* springPointer = &spring;
 };
 
 

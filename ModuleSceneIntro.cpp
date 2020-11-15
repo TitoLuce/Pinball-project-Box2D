@@ -7,6 +7,7 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "ModuleFonts.h"
+#include "Animation.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -19,6 +20,36 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	lights.light_on_rect.w = 13;
 	lights.light_on_rect.h = 13;
 
+	//Normal animation
+	for (int i = 0; i < 6; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			spring.PushBack({ j * 41,i*77,39,75 });
+		}
+	}
+	for (int j = 0; j < 7; j++)
+	{
+		spring.PushBack({ j * 41, 462,39,75 });
+	}
+	//Stays on final frame a bit to give the player a small margin to hit the maximum value
+	for (int a = 0; a < 2; a++)
+	{
+		spring.PushBack({ 246, 462,39,75 });
+	}
+	//Inverted animation
+	for (int j = 0; j < 7; j++)
+	{
+		spring.PushBack({ 246 - j * 41, 462,39,75 });
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			spring.PushBack({ 328 - j * 41,385 - i * 77,39,75 });
+		}
+	}
+	spring.SetSpeed(0.5f);
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -38,7 +69,7 @@ bool ModuleSceneIntro::Start()
 	bumper = App->textures->Load("pinball/Bumper.png");
 	title = App->textures->Load("pinball/Title.png");
 	lightsTex = App->textures->Load("pinball/Sensors.png");
-	flipersTex = App->textures->Load("pinball/Flipers.png");
+	flippersTex = App->textures->Load("pinball/Flipers.png");
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
@@ -319,7 +350,7 @@ bool ModuleSceneIntro::Start()
 	bumper4->listener = this;
 	bumper5->listener = this;
 
-	// Flipers
+	// Flippers
 	
 	b2Vec2 athing = { -0.6, 0 };
 	b2Vec2 bthing = { 0, 0 };
@@ -328,17 +359,15 @@ bool ModuleSceneIntro::Start()
 	leftFlipper->rotor = App->physics->CreateCircleStatic(205, 885, 4);
 	leftFlipper->polygon = App->physics->CreateRectangle(209, 920, 90, 26);
 	App->physics->CreateRevoluteJoint(leftFlipper->polygon, athing, leftFlipper->rotor, bthing, 15.0f);
-	leftFlipper->drawingRect = { 140, 0, 90, 60 };
+	leftFlipper->drawingRect = { 0, 0, 89, 32 };
 	flippers.add(leftFlipper);
 	
 	
 	topFlipper->rotor = App->physics->CreateCircleStatic(268, 405, 4);
 	topFlipper->polygon = App->physics->CreateRectangle(270, 390, 60, 20);
 	App->physics->CreateRevoluteJoint(topFlipper->polygon, athing, topFlipper->rotor, bthing, 15.0f);
-	topFlipper->drawingRect = {0,0,0,0};
+	topFlipper->drawingRect = { 0,46,45,15 };
 	flippers.add(topFlipper);
-	
-
 
 	athing = { 0.6, 0 };
 
@@ -346,7 +375,7 @@ bool ModuleSceneIntro::Start()
 	rightFlipper->rotor = App->physics->CreateCircleStatic(395, 885, 4);
 	rightFlipper->polygon = App->physics->CreateRectangle(209, 904, 90, 26);
 	App->physics->CreateRevoluteJoint(rightFlipper->polygon, athing, rightFlipper->rotor, bthing, 15.0f);
-	rightFlipper->drawingRect = {0,0,0,0};
+	rightFlipper->drawingRect = { 112,0,89,32 };
 	flippers.add(rightFlipper);
 	
 
@@ -356,6 +385,9 @@ bool ModuleSceneIntro::Start()
 
 	//Font
 	font = App->fonts->Load("pinball/Font2.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZÑ123456789.:-+*/_!?0", 1);
+
+	//"Spring"
+	springTexture = App->textures->Load("pinball/ChargeBar.png");
 
 	return ret;
 }
@@ -371,51 +403,6 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	//Inputs========================================================
-	if (gameState == GameState::PLAYING)
-	{
-		if (App->input->GetKey(SDL_SCANCODE_LEFT))
-		{
-			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-			{
-				p2List_item<Flipper*>* f = flippers.getFirst();
-				while (f != NULL)
-				{
-
-					f->data->polygon->body->ApplyForce({ -100,0 }, { 0,0 }, true);
-
-					f = f->next;
-				}
-			}
-
-		}
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/) 
-		{
-			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-			{
-				p2List_item<Flipper*>* f = flippers.getFirst();
-				while (f != NULL)
-				{
-
-					f->data->polygon->body->ApplyForce({ 100,0 }, { 0,0 }, true);
-
-					f = f->next;
-				}
-			}
-
-
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			ray_on = !ray_on;
-			ray.x = App->input->GetMouseX();
-			ray.y = App->input->GetMouseY();
-		}
-
-		
-	}
-
 	// Prepare for raycast ------------------------------------------------------
 
 	iPoint mouse;
@@ -449,13 +436,48 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
 
+	//Game state stansition maintenance
 	if (gameState == GameState::NEW_GAME)
 	{
 		App->renderer->Blit(title, 0, 0, false);
-		score = 0;
+		previousScore = score;
+		if (once)
+		{
+			score = 0;
+			once = false;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_RETURN))
+		{
+			once = true;
+			gameState = GameState::PLAYING;
+		}
+	}
+
+	if (gameState == GameState::PLAYING)
+	{
+		if (once)
+		{
+			App->audio->PlayMusic("pinball/Off Pepper Steak (Extended).ogg");
+			once = false;
+		}
+	}
+
+	if (gameState == GameState::BALL_LOST)
+	{
+		//Will do some more stuff here when possible
+		once = true;
 		if (App->input->GetKey(SDL_SCANCODE_RETURN))
 		{
 			gameState = GameState::PLAYING;
+		}
+	}
+
+	if (gameState == GameState::GAME_OVER)
+	{
+		//Will do some more stuff here when possible
+		if (App->input->GetKey(SDL_SCANCODE_RETURN))
+		{
+			gameState = GameState::NEW_GAME;
 		}
 	}
 
@@ -495,13 +517,9 @@ update_status ModuleSceneIntro::Update()
 	{
 		int x, y;
 		f->data->polygon->GetPosition(x, y);
-		App->renderer->Blit(flipersTex, x, y - 5, &f->data->drawingRect, 1.0f, f->data->polygon->GetRotation());
+		App->renderer->Blit(flippersTex, x, y, &f->data->drawingRect, 1.0f, f->data->polygon->GetRotation());
 		f = f->next;
 	}
-
-	App->renderer->Blit(flipersTex, 209 - leftrect.w / 2, 920 - leftrect.h / 2, &leftrect, 1.0f, leftFlipper->polygon->GetRotation());
-
-
 
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN && App->physics->debug)
 	{
@@ -509,7 +527,6 @@ update_status ModuleSceneIntro::Update()
 		circles.getLast()->data->listener = this;
 		circles.getLast()->data->body->SetBullet(true);
 	}
-
 
 
 
@@ -576,6 +593,58 @@ update_status ModuleSceneIntro::Update()
 		c->data->GetPosition(x, y);
 		App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
+	}
+
+	//Default "spring" state
+	springPointer = &spring;
+	App->renderer->Blit(springTexture, SCREEN_WIDTH - 39, SCREEN_HEIGHT - 75, &springPointer->GetCurrentFrame(), false);
+
+	//Inputs========================================================
+	if (gameState == GameState::PLAYING)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_LEFT))
+		{
+			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			{
+				p2List_item<Flipper*>* f = flippers.getFirst();
+				while (f != NULL)
+				{
+
+					f->data->polygon->body->ApplyForce({ -100,0 }, { 0,0 }, true);
+
+					f = f->next;
+				}
+			}
+
+		}
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) /*&& !App->player->game_over*/)
+		{
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			{
+				p2List_item<Flipper*>* f = flippers.getFirst();
+				while (f != NULL)
+				{
+
+					f->data->polygon->body->ApplyForce({ 100,0 }, { 0,0 }, true);
+
+					f = f->next;
+				}
+			}
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			ray_on = !ray_on;
+			ray.x = App->input->GetMouseX();
+			ray.y = App->input->GetMouseY();
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		{
+			springPointer->Update();
+			App->renderer->Blit(springTexture, SCREEN_WIDTH - 39, SCREEN_HEIGHT - 75, &springPointer->GetCurrentFrame(), false);
+		}
+		else { spring.Reset(); }
 	}
 
 
