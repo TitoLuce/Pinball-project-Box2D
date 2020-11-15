@@ -24,8 +24,7 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	{
 		for (int j = 0; j < 9; j++)
 		{	
-			powerSpring = j;
-			LOG("%d", powerSpring);
+
 			spring.PushBack({ j * 41,i*77,39,75 });
 		}
 	}
@@ -945,19 +944,39 @@ update_status ModuleSceneIntro::Update()
 			kicker.mobile->body->ApplyForce({ 0,18 }, { 0,0 }, true);
 			springPointer->Update();
 			App->renderer->Blit(springTexture, SCREEN_WIDTH - 39, SCREEN_HEIGHT - 75, &springPointer->GetCurrentFrame(), false);
+
+			if (!inverter)
+			{
+				power += 5;
+			}
+			else
+			{
+				power -= 5;
+			}
+
+			if (power >= 620)
+			{
+				inverter = true;
+			}
+			if (power <= 0)
+			{
+				inverter = false;
+			}
 		}
 		else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 		{ 
-			kicker.mobile->body->ApplyForce({ 0,-610 }, { 0,0 }, true);
+			LOG("%f", power);
+			kicker.mobile->body->ApplyForce({ 0,-power }, { 0,0 }, true);
 			App->audio->PlayFx(spring_fx, 50);
-			spring.Reset(); 
+			spring.Reset();
+			if (power >= 585)
+			{
+				score += 5000;
+				perfectShotBonus = true;
+			}
+			power = 0;
 		} //Key release
-
-
 	}
-
-
-
 
 	if (!isBallAlive)
 	{

@@ -218,6 +218,6 @@ public:
 	SDL_Texture* springTexture;
 	Animation spring;
 	Animation* springPointer = &spring;
+	float power;
+	bool inverter = false;
 };
-
-
