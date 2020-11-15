@@ -80,7 +80,9 @@ bool ModuleSceneIntro::Start()
 
 	//SDL_Load Audio
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
-	ding_fx = App->audio->LoadFx("pinball/ding.ogg");
+	ding_fx = App->audio->LoadFx("pinball/Ding.wav");
+	spring_fx = App->audio->LoadFx("pinball/Muelle.ogg");
+	gameOver_fx = App->audio->LoadFx("pinball/GameOver.wav");
 	
 
 	//Blocker
@@ -506,6 +508,7 @@ update_status ModuleSceneIntro::Update()
 	//Game state stansition maintenance
 	if (gameState == GameState::NEW_GAME)
 	{
+		onceTwo = true;
 		App->renderer->Blit(title, 0, 0, false);
 		previousScore = score;
 		if (once)
@@ -543,11 +546,16 @@ update_status ModuleSceneIntro::Update()
 	if (gameState == GameState::GAME_OVER)
 	{
 		balls = 0;
+		if (onceTwo)
+		{
+			App->audio->PlayFx(gameOver_fx, 20);
+			onceTwo = false;
+		}
 		App->fonts->BlitText(230, 525, font, "GAME OVER");
 		 App->fonts->BlitText(170, 545, font, "PRESS UP TO RESTART");
-		//Will do some more stuff here when possible
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 		{
+			once = true;
 			gameState = GameState::NEW_GAME;
 		}
 	}
@@ -588,6 +596,19 @@ update_status ModuleSceneIntro::Update()
 		}
 		else {
 			sensorBonus = false;
+			timeCounter = 0;
+		}
+	}
+
+	if (perfectShotBonus)
+	{
+		App->fonts->BlitText(140, 525, font, "PERFECT SHOT BONUS +5000");
+		if (timeCounter < 100)
+		{
+			timeCounter++;
+		}
+		else {
+			perfectShotBonus = false;
 			timeCounter = 0;
 		}
 	}

@@ -171,11 +171,14 @@ public:
 	SDL_Texture* flippersTex = nullptr;
 	uint bonus_fx;
 	uint ding_fx;
+	uint spring_fx;
+	uint gameOver_fx;
 	p2Point<int> ray;
 	bool ray_on;
 
 	//Game and ball states
 	bool once = true;
+	bool onceTwo = true;
 	bool musicOnce = true;
 	enum GameState
 	{
