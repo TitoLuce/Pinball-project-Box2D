@@ -39,7 +39,7 @@ This is an university project made for Phisics 2 of year 2 of Game Design and De
  - Aram Galarza [GitHub](https://github.com/WittIsHere)
  
  The github page where we work:
- - [The Git] (https://github.com/TitoLuce/Pinball-project-Box2D)
+ - [The Git](https://github.com/TitoLuce/Pinball-project-Box2D)
 
 ## License
 
