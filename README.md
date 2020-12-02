@@ -29,7 +29,6 @@ This is an university project made for Phisics 2 of year 2 of Game Design and De
  
  
  ## Known Bugs 
- * In Debug mode, if you drag the ball to the "death zone" it triggers a crash
  * there is a specific speed at which if you shoot the kicker, you are stuck in an infinite loop in the upper section of the map
 
 ## Developers
