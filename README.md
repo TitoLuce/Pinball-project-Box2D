@@ -1,5 +1,5 @@
 # Paroleball
-This is an university project made for Physics 2 of year 2 of Game Design and Development in the UPC.
+This is a university project made for Physics 2 of year 2 of Game Design and Development in the UPC.
 
 
 ## Differences with the main game.
