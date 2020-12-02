@@ -1,11 +1,11 @@
 # Paroleball
-This is an university project made for Phisics 2 of year 2 of Game Design and Development in the UPC.
+This is an university project made for Physics 2 of year 2 of Game Design and Development in the UPC.
 
 
 ## Differences with the main game.
   * There is no hole in the middle where the ball stops and shoots at enemies
   * No shooting enemy
-  * no controller only support
+  * No controller only support
   * 2 special features have been applied
   * No enemies
   * The side light switches don't light up, instead there are extra lights in fronts of them to signify that they are active
