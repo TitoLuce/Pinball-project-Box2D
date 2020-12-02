@@ -26,6 +26,7 @@ This is a university project made for Physics 2 of year 2 of Game Design and Dev
   DEBUG KEYS:
  
  * F1: To Show Hitboxes and also enable mouse interaction
+ 	* 1 (When on F1 mode): create an extra ball
  
  
  ## Known Bugs 
