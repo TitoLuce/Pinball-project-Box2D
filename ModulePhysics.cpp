@@ -337,6 +337,8 @@ update_status ModulePhysics::PostUpdate()
 				b2Vec2 Mpos = { PIXEL_TO_METERS(App->input->GetMouseX()),PIXEL_TO_METERS(App->input->GetMouseY()) };
 				if (f->GetShape()->TestPoint(b->GetTransform(), Mpos))
 				{
+
+					currentBody = b;
 					b2MouseJointDef def;
 					def.bodyA = ground;
 					def.bodyB = b;
@@ -345,21 +347,14 @@ update_status ModulePhysics::PostUpdate()
 					def.frequencyHz = 2.0f;
 					def.maxForce = 100.0f * b->GetMass();
 					mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
-					currentBody = b;
+					
 				}
 			}
 		}
 	}
 
-	// If a body was selected we will attach a mouse joint to it
-	// so we can pull it around
-	// TODO 2: If a body was selected, create a mouse joint
-	// using mouse_joint class property
 
-
-	// TODO 3: If the player keeps pressing the mouse button, update
-	// target position and draw a red line between both anchor points
-	if (currentBody != nullptr)
+	if (currentBody != nullptr && mouse_joint != nullptr)
 	{
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 		{

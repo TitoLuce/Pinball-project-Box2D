@@ -981,7 +981,11 @@ update_status ModuleSceneIntro::Update()
 	if (!isBallAlive)
 	{
 		isBallAlive = true;
-		
+		if (App->physics->mouse_joint != nullptr)
+		{
+			App->physics->mouse_joint->GetBodyA()->GetWorld()->DestroyJoint(App->physics->mouse_joint);
+			App->physics->mouse_joint = nullptr;
+		}
 		p2List_item<PhysBody*>* c = circles.getFirst();
 		while (c != NULL)
 		{
